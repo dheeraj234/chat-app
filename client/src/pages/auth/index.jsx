@@ -6,12 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { apiClient } from "@/lib/api-client";
-import { SIGNUP_ROUTE } from "@/utils/constants";
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
+import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 const Auth = () => {
+  const navigate = useNavigate()
+  const {setUserInfo}=useAppStore()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const validateLogin = () => {
+    if (!email.length) {
+      Toaster.error("Email is required.");
+      return false;
+    }
+    if (!password.length) {
+      Toaster.error("Password is required");
+      return false;
+    }
+    return true;
+  };
 
   const validateSignup = () => {
     if (!email.length) {
@@ -29,11 +45,26 @@ const Auth = () => {
     return true;
   };
 
-  const handleLogin = async () => {};
+  const handleLogin = async () => {
+    if(validateLogin()){
+      const response= await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
+      console.log("THE LGOIN RESPONSE",response);
+    }
+    if(response.data.user.id){
+      setUserInfo(response.data.user)
+      if(response.data.user.profileSetup) navigate("/chat");
+      else navigate("/profile")
+    }
+
+  };
   const handleSignup = async () => {
     if (validateSignup()) {
-      const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
+      const response = await apiClient.post(SIGNUP_ROUTE, { email, password },{withCredentials:true});
       console.log({ response });
+    }
+    if(response.status===201){
+      setUserInfo(response.data.user)
+      navigate("/profile");
     }
   };
 
@@ -51,7 +82,7 @@ const Auth = () => {
             </p>
           </div>
           <div className="flex items-center justify-center w-full">
-            <Tabs className="w-full">
+            <Tabs className="w-full" defaultValue="login">
               <TabsList className="flex w-full">
                 <TabsTrigger className="flex-1 text-black text-opacity-90 border-b-2 rounded-none data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300" value="login">
                   Login
