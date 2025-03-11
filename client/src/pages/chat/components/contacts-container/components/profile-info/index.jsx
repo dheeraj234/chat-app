@@ -7,6 +7,7 @@ import {IoPowerSharp} from "react-icons/io5"
 import React from 'react'
 import {useNavigate} from "react-router-dom"
 import { apiClient } from '@/lib/api-client';
+import { getColor } from '@/lib/utils';
 
 const ProfileInfo = () => {
     const {userInfo,setUserInfo}=useAppStore();
@@ -31,7 +32,7 @@ const ProfileInfo = () => {
                     <Avatar className="h-12 w-12 rounded-full overflow-hidden">
                         {userInfo.image ? <AvatarImage src={`${HOST}/${userInfo.image}`} alt="profile" className="object-cover w-full h-full bg-black"
                         />
-                            : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex justify-center items-center rounded-full ${(userInfo.color)}`}>
+                            : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex justify-center items-center rounded-full ${getColor(userInfo.color)}`}>
                                 {userInfo.firstName ? userInfo.firstName.split("").shift()
                                     : userInfo.email.split("").shift()}
                             </div>}
