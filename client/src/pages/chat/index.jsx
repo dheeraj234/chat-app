@@ -18,8 +18,8 @@ const Chat=()=>{
     },[userInfo,navigate])
     return <div className="flex h-[100vh] text-white overflow-hidden">
         <ContainsContainer/>
-        <EmptyChatContainer/>
-        <ChatContainer/>
+        {/* <EmptyChatContainer/>
+        <ChatContainer/> */}
     </div>
     }
  export default Chat
