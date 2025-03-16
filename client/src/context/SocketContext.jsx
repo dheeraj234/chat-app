@@ -1,8 +1,8 @@
 import { useAppStore } from "@/store";
 import { HOST } from "@/utils/constants";
 
-const { createContext,useState,useContext,useRef,useEffect, Children } = require("react");
-
+import { createContext,useState,useContext,useRef,useEffect, Children } from "react";
+import {io} from "socket.io-client"
 const SocketContext= createContext(null)
 export const useSocket=()=>{
     return useContext(SocketContext)
@@ -43,10 +43,10 @@ export const SocketProvider=({Children})=>{
             }
         }
     },[userInfo])
-}
 
-return (
-    <SocketContext.Provider value={socket.Children}>
-        {Children}
-    </SocketContext.Provider>
-)
+    return (
+        <SocketContext.Provider value={socket.Children}>
+            {Children}
+        </SocketContext.Provider>
+    )
+}

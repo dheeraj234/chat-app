@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { GrAttachment } from "react-icons/gr"
 import { RiEmojiStickerLine } from "react-icons/ri"
 import { IoSend } from "react-icons/io5";
-import { EmojiPicker } from "emoji-picker-react"
+import EmojiPicker from 'emoji-picker-react';
 import { useAppStore } from '@/store';
 import { useSocket } from '@/context/SocketContext';
 import { apiClient } from '@/lib/api-client';

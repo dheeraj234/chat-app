@@ -2,7 +2,7 @@ import { useAppStore } from "@/store"
 import React, { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { IoArrowBack } from "react-icons/io5"
-import { Faplus, FaTrash } from "react-icons/fa"
+import { FaPlus, FaTrash } from "react-icons/fa"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { colors, getColor } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
@@ -120,7 +120,7 @@ const Profile = () => {
                                 onClick={image ? handleDeleteImage : handleFileInputClick}
                                 >
                                     {image ? <FaTrash className="text-white text-3xl cursor-pointer" />
-                                        : <Faplus className="text-white text-3xl cursor-pointer" />}
+                                        : <FaPlus className="text-white text-3xl cursor-pointer" />}
                                 </div>
                             )
                         }
