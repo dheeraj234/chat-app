@@ -9,6 +9,8 @@ import { Toaster } from "@/components/ui/sonner"
 import {toast}from "sonner"
 import { apiClient } from "@/lib/api-client"
 import { ADD_PROFILE_IMAGE_ROUTE, HOST, REMOVE_PROFILE_IMAGE_ROUTE, UPDATE_PROFILE_ROUTE } from "@/utils/constants"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 const Profile = () => {
     const navigate = useNavigate()
     const { userInfo, setUserInfo } = useAppStore()
@@ -17,7 +19,7 @@ const Profile = () => {
     const [image, setImage] = useState(null)
     const [hovered, setHovered] = useState(false)
     const [selectedColor, setSelectedColor] = useState(0);
-    const fileInputRef=useRef()
+    const fileInputRef=useRef(null)
     useEffect(()=>{
         if(userInfo.profileSetup){
             setFirstName(userInfo.firstName)
@@ -39,7 +41,7 @@ const Profile = () => {
         }
         return true
     }
-    const saveChanges = async () => {
+    const saveChanges = async () => {        
         if(validateProfile()){
             try {
                 const response= await apiClient.post(
@@ -72,9 +74,9 @@ const Profile = () => {
             const formData=new FormData();
             formData.append("profile-image",file);
             const response= await apiClient.post(ADD_PROFILE_IMAGE_ROUTE,formData,{withCredentials:true});
-            if(response.status===20 && response.data.image){
+            if(response.status===200 && response.data.image){
                 setUserInfo({...userInfo,image:response.data.image});
-                toast.error("Image updated Successfully")
+                toast.success("Image updated Successfully")
             }
             const reader=new FileReader();
             reader.onload=()=>{
@@ -135,7 +137,7 @@ const Profile = () => {
                             <Input placeholder="First Name" type="text" onChange={(e)=>setFirstName(e.target.value)} value={firstName} className="rounded-lg p-6 bg-[#2c2e3b] border-none"/>
                         </div>
                         <div className="w-full">
-                            <Input placeholder="Last Name" type="text" nChange={(e)=>setLastName(e.target.value)} value={lastName} className="rounded-lg p-6 bg-[#2c2e3b] border-none"/>
+                            <Input placeholder="Last Name" type="text" onChange={(e)=>setLastName(e.target.value)} value={lastName} className="rounded-lg p-6 bg-[#2c2e3b] border-none"/>
                         </div>
                         <div className="w-full flex gap-5">
                             {colors.map((color,index)=> 

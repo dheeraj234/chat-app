@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
@@ -19,11 +20,11 @@ const Auth = () => {
 
   const validateLogin = () => {
     if (!email.length) {
-      Toaster.error("Email is required.");
+      toast.error("Email is required.");
       return false;
     }
     if (!password.length) {
-      Toaster.error("Password is required");
+      toast.error("Password is required");
       return false;
     }
     return true;
@@ -31,15 +32,15 @@ const Auth = () => {
 
   const validateSignup = () => {
     if (!email.length) {
-      Toaster.error("Email is required.");
+      toast.error("Email is required.");
       return false;
     }
     if (!password.length) {
-      Toaster.error("Password is required");
+      toast.error("Password is required");
       return false;
     }
     if (password !== confirmPassword) {
-      Toaster.error("Password and confirm password should be the same.");
+      toast.error("Password and confirm password should be the same.");
       return false;
     }
     return true;
@@ -52,8 +53,12 @@ const Auth = () => {
     }
     if(response.data.user.id){
       setUserInfo(response.data.user)
-      if(response.data.user.profileSetup) navigate("/chat");
-      else navigate("/profile")
+      if(response.data.user.profileSetup) {
+        navigate("/chat");
+      }
+      else {
+        navigate("/profile")
+      }
     }
 
   };

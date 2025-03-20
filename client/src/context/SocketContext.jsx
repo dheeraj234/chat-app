@@ -1,16 +1,17 @@
 import { useAppStore } from "@/store";
 import { HOST } from "@/utils/constants";
-
-import { createContext,useState,useContext,useRef,useEffect, Children } from "react";
+import { createContext,useContext,useRef,useEffect } from "react";
 import {io} from "socket.io-client"
 const SocketContext= createContext(null)
 export const useSocket=()=>{
     return useContext(SocketContext)
 }
-export const SocketProvider=({Children})=>{
+export const SocketProvider=({children})=>{
     const socket= useRef();
-    const {userInfo}=useAppStore();
+    const { userInfo } = useAppStore();
     useEffect(()=>{
+        console.log("socket!!!!!!",HOST,userInfo);
+        
         if(userInfo){
             socket.current=io(HOST,{
                 withCredentials:true,
@@ -21,7 +22,7 @@ export const SocketProvider=({Children})=>{
                 console.log("Connected to socket server");
             });
             const handleRecieveMessage=(message)=>{
-                const {selectedChatData,selectedChatType,addContactsInDMContacts}=useAppStore.getState();
+                const {selectedChatData,selectedChatType,addContactsInDMContacts,addMessage}=useAppStore.getState();
                 if(selectedChatType!==undefined && (selectedChatData._id===message.sender._id || selectedChatData._id===message.recipient._id)){
                     console.log("message rcv",message);
                     addMessage(message)
@@ -45,8 +46,8 @@ export const SocketProvider=({Children})=>{
     },[userInfo])
 
     return (
-        <SocketContext.Provider value={socket.Children}>
-            {Children}
+        <SocketContext.Provider value={socket.current}>
+            {children}
         </SocketContext.Provider>
     )
 }

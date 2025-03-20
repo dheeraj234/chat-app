@@ -12,6 +12,7 @@ const MessageBar = () => {
   const emojiRef = useRef();
   const socket = useSocket()
   const {
+    userInfo,
     selectedChatType,
     selectedChatData,
     setIsUploading,

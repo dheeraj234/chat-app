@@ -16,8 +16,8 @@ export const searchContacts=async (request, response, next) => {
                 {_id:{$ne: request.userId}},
                 {
                     $or:[{firstName: regex},{lastName:regex},{email:regex}]
-                }
-            ]
+                },
+            ],
         })
         return response.status(200).json({contacts})
     } catch (error) {
@@ -27,62 +27,58 @@ export const searchContacts=async (request, response, next) => {
 }
 
 
-export const getContactsForDMList=async (request, response, next) => {
+export const getContactsForDMList = async (request, response, next) => {
     try {
-        let {userId}=request;
-        userId= new mongoose.Types.ObjectId(userId);
-        const contacts= await Message.aggregate([
+        let { userId } = request;
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return response.status(400).send("Invalid userId");
+        }
+        userId = new mongoose.Types.ObjectId(userId);
+
+        const contacts = await Message.aggregate([
+            { $match: { $or: [{ sender: userId }, { recipient: userId }] } },
+            { $sort: { timestamp: -1 } }, // ✅ Fixed sorting issue
             {
-                $match:{
-                    $or:[{sender:userId},{recipient:userId}]
-                }
-            },
-            {
-                $or:{timestamp:-1},
-            },
-            {
-                $group:{
-                    _id:{
-                        $cond:{
-                            if:{$eq:["$sender",userId]},
-                            then:"$recipient",
-                            else:"$sender",
+                $group: {
+                    _id: {
+                        $cond: {
+                            if: { $eq: ["$sender", userId] },
+                            then: "$recipient",
+                            else: "$sender",
                         },
                     },
-                    lastMessagetime:{$first:"$timestamp"},
+                    lastMessagetime: { $first: "$timestamp" },
                 },
             },
             {
-                $lookup:{
-                    from:"users",
-                    localField:"_id",
-                    foreignField:"_id",
-                    as:"contactInfo"
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "contactInfo",
                 },
             },
+            { $unwind: "$contactInfo" },
             {
-                $unwind:"$contactInfo",
-            },
-            {
-                $project:{
-                    _id:1,
-                    lastMessagetime:1,
-                    email:"$contactInfo.email",
-                    firstName:"$contactInfo.firstName",
-                    lastName:"$contactInfo.lastName",
-                    image:"$contactInfo.image",
-                    color:"$contactInfo.color",
+                $project: {
+                    _id: 1,
+                    lastMessagetime: 1,
+                    email: "$contactInfo.email",
+                    firstName: "$contactInfo.firstName",
+                    lastName: "$contactInfo.lastName",
+                    image: "$contactInfo.image",
+                    color: "$contactInfo.color",
                 },
-            },{
-                $sort:{lastMessagetime:-1}
             },
-        ])
-        return response.status(200).json({contacts})
+            { $sort: { lastMessagetime: -1 } },
+        ]);
+
+        return response.status(200).json({ contacts });
     } catch (error) {
         console.log({ error });
-        return response.status(500).send("Internal Server Error")
+        return response.status(500).send("Internal Server Error");
     }
-}
+};
 
 export const getAllContacts=async (request, response, next) => {
     try {

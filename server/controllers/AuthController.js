@@ -9,10 +9,14 @@ const createToken = (email, userId) => {
 export const signup = async (request, response, next) => {
     try {
         const { email, password } = request.body;
+        console.log("email,password",email,password);
+        
         if (!email || !password) {
             return response.status(400).send("Email and PAssword is Required")
         }
         const user = await User.create({ email, password });
+        console.log("USER",user);
+        
         response.cookie("jwt", createToken(email, user.id), {
             maxAge,
             secure: true,
@@ -91,8 +95,8 @@ export const getUserInfo=async (request, response, next) => {
 export const updateProfile=async (request, response, next) => {
     try {
         const {userId}=request;
-        const {firstName,lastName}=request.body;
-        if(!firstName||!lastName){
+        const {firstName,lastName,color}=request.body;
+        if(!firstName || !lastName){
             return response.status(400).send("FirstName lastName and color is required.")
         }
         const userData = await User.findByIdAndUpdate(userId,{firstName,lastName,color,profileSetup:true},{new:true,runValidators:true});
@@ -117,7 +121,7 @@ if(!request.file){
     return response.status(400).send("File is required")
 }
 const date = Date.now()
-let fileName ="uploads/profiles"+ Date + request.file.originalname
+let fileName ="uploads/profiles/"+ date + request.file.originalname
 renameSync(request.file.path,fileName);
 const updateUser= await User.findByIdAndUpdate(request.userId,{image:fileName},{new:true,runValidators:true});
 
@@ -140,8 +144,7 @@ export const removeProfileImage=async (request, response, next) => {
             unlinkSync(user.image)
         }
         user.image=null;
-        await User.save();
-        const userData = await User.findByIdAndUpdate(userId,{firstName,lastName,color,profileSetup:true},{new:true,runValidators:true});
+        await user.save();
         return response.status(200).send("Profile image removed successfully")
     } catch (error) {
         console.log({ error });

@@ -12,7 +12,8 @@ dotenv.config()
 
 const app=express();
 const port = process.env.PORT || 3001;
-const databaseURL = "mongodb+srv://admin:admin@cluster0.76a8z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const databaseURL = process.env.DATABASE_URL
+// const databaseURL = "mongodb+srv://admin:admin@cluster0.76a8z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 app.use(cors({
     origin:[process.env.ORIGIN],
     methods:["GET","POST","PUT","PATCH","DELETE"],
@@ -34,5 +35,5 @@ const server = app.listen(port,()=>{
 setupSocket(server);
 console.log("databaseURL",databaseURL);
 mongoose.connect(databaseURL)
-.then((con)=> console.log('DB Connection Successfully',con))
+.then((con)=> console.log('DB Connection Successfully'))
 .catch((err)=>console.log(err.message))

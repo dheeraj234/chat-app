@@ -19,7 +19,7 @@ import { apiClient } from '@/lib/api-client'
 import { HOST, SEARCH_CONTACTS_ROUTE } from '@/utils/constants'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
-import { getColor } from '@/lib/utils'
+import { animationDefaultOptions, getColor } from '@/lib/utils'
 import { useAppStore } from '@/store'
 
 const NewDM = () => {
@@ -34,7 +34,7 @@ const NewDM = () => {
                     { searchTerm },
                     { withCredentials: true }
                 );
-                if (response.status === 200) {
+                if (response.status === 200 && response.data.contacts) {
                     setSearchedContacts(response.data.contacts)
                 } else {
                     setSearchedContacts([]);

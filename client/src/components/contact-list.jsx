@@ -1,6 +1,5 @@
 import { useAppStore } from '@/store'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
-import { Content } from '@radix-ui/react-dialog';
 import React from 'react'
 import { HOST } from '@/utils/constants';
 import { getColor } from '@/lib/utils';

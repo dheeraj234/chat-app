@@ -1,5 +1,6 @@
 import Channel from "../models/ChannelModel.js";
 import User from "../models/UserModel.js";
+import mongoose from "mongoose";
 
 export const createChannel =async (request, response, next) => {
     try {
@@ -29,10 +30,10 @@ export const createChannel =async (request, response, next) => {
 
 export const getUserChannels =async (request, response, next) => {
     try {
-        const userId= new mongoose.Types.ObjectId(request.userId);
-        const channels= await Channel.find({
-            $or:[{admin:userId},{members:userId}],
-        }).sort({updatedAt:-1});
+        const userId = new mongoose.Types.ObjectId(request.userId);
+        const channels = await Channel.find({
+            $or: [{ admin: userId }, { members: { $in: [userId] } }],}).sort({ updatedAt: -1 });
+
 
         
         return response.status(201).send({channels});

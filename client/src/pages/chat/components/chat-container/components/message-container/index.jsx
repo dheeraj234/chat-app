@@ -28,6 +28,8 @@ const MessageContainer = () => {
         const response = await apiClient.post(GET_ALL_MESSAGES_ROUTE,
           { id: selectedChatData._id },
           { withCredentials: true });
+          console.log("response",response);
+          
         if (response.data.messages) {
           setSelectedChatMessages(response.data.messages)
         }
@@ -35,7 +37,7 @@ const MessageContainer = () => {
         console.log(error);
       }
     }
-    const getChannelMessages=async()=>{
+    const getChannelMessages = async () => {
       try {
         const response = await apiClient.get(GET_CHANNEL_MESSAGES,
           { withCredentials: true });
@@ -48,7 +50,7 @@ const MessageContainer = () => {
     }
     if (selectedChatData._id) {
       if (selectedChatType === "contact") getMessages();
-      else if(selectedChatType==="channel") getChannelMessages()
+      else if (selectedChatType === "channel") getChannelMessages()
     }
   }, [
     selectedChatData,
@@ -112,53 +114,55 @@ const MessageContainer = () => {
     })
   }
   const renderDMMessages = (message) => {
-    <div className={`${message.sender === senderChatDAta._id ? "text-left" : "text-right"}`}>
-      {
-        message.messageType === "text" && (
-          <div className={`${message.sender !== selectedChatData._id
-            ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-            : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"} 
-          border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
-            {message.content}
-          </div>
-        )
-      }
-      {
-        message.messageType === "file" && (
-          <div className={`${message.sender !== selectedChatData._id
-            ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-            : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"} 
-          border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
-            {checkIfImage(message.fileUrl) ?
-              <div className='cursor-pointer'
-                onClick={() => {
-                  setshowImage(true)
-                  setImageUrl(message.fileUrl);
-                }}
+    return <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
+    {console.log("message",message)}
+    {
+      message.messageType === "text" && (
+        <div className={`${message.sender !== selectedChatData._id
+          ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+          : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"} 
+          border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          >
+          {message.content}
+        </div>
+      )
+    }
+    {
+      message.messageType === "file" && (
+        <div className={`${message.sender !== selectedChatData._id
+          ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+          : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"} 
+        border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
+          {checkIfImage(message.fileUrl) ?
+            <div className='cursor-pointer'
+              onClick={() => {
+                setshowImage(true)
+                setImageUrl(message.fileUrl);
+              }}
+            >
+              <img src={`${HOST}/${message.fileUrl}`}
+                height={300} width={300}
+              />
+            </div>
+            : <div className='flex justify-center items-center gap-4'>
+              <span className='text-white/8 text-3xl bg-black/20 rounded-full p-3'>
+                <MdFolderZip />
+              </span>
+              <span>{message.fileUrl.split("/").pop()}</span>
+              <span className="text-2xl p-3 rounded-full bg-black/20 hover:bg-black/50 
+                cursor-pointer transition-all duration-300"
+                onClick={() => downloadFile(message.fileUrl)}
               >
-                <img src={`${HOST}/${message.fileUrl}`}
-                  height={300} width={300}
-                />
-              </div>
-              : <div className='flex justify-center items-center gap-4'>
-                <span className='text-white/8 text-3xl bg-black/20 rounded-full p-3'>
-                  <MdFolderZip />
-                </span>
-                <span>{message.fileUrl.split("/").pop()}</span>
-                <span className="text-2xl p-3 rounded-full bg-black/20 hover:bg-black/50 
-                  cursor-pointer transition-all duration-300"
-                  onClick={() => downloadFile(message.fileUrl)}
-                >
-                  <IoMdArrowRoundDown />
-                </span>
-              </div>}
-          </div>
-        )
-      }
-      <div className="text-xs text-gray-500">
-        {moment(message.timestamp).format("LT")}
-      </div>
+                <IoMdArrowRoundDown />
+              </span>
+            </div>}
+        </div>
+      )
+    }
+    <div className="text-xs text-gray-500">
+      {moment(message.timestamp).format("LT")}
     </div>
+  </div>
   }
 
   const renderChannelMessages = async (message) => {

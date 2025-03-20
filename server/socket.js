@@ -1,49 +1,40 @@
-import { Server as SocketIOServer } from "socket.io";
-import Message from "./models/MessagesModel.js";
+import {Server as SocketIOServer} from "socket.io"
 import Channel from "./models/ChannelModel.js";
-import { EventEmitter } from "events";
+ import Message from "./models/MessagesModel.js";
+ const setupSocket=(server)=>{
+     const io = new SocketIOServer(server,{
+         cors:{
+             origin:process.env.ORIGIN,
+             methods:["GET","POST"],
+             credentials:true,
+         },
+     });
+     const userSocketMap = new Map();
+     const disconnect=(socket)=>{
+         console.log(`Client Disconnected: ${socket.id}`);
+         for(const [userId,socketId] of userSocketMap.entries()){
+             if(socketId===socket.id){
+                 userSocketMap.delete(userId);
+                 break
+             }
+         }
+     }
+     const sendMessage = async(message) => {
+         const senderSocketId=userSocketMap.get(message.sender);
+         const recipientSocketId=userSocketMap.get(message.recipient);
+         const createMessage= await Message.create(message)
+         const messageData= await Message.findById(createMessage._id)
+         .populate("sender","id email firstName lastName image color")
+         .populate("recipient","id email firstName lastName image color");
+         if(recipientSocketId){
+             io.to(recipientSocketId).emit("recieveMessage",messageData)
+         }
+         if(senderSocketId){
+             io.to(senderSocketId).emit("recieveMessage",messageData)
+         }
+     }
 
-EventEmitter.defaultMaxListeners = 20; // Prevent memory leak warnings
-
-const setupSocket = (server) => {
-    const io = new SocketIOServer(server, {
-        cors: {
-            origin: process.env.ORIGIN,
-            methods: ["GET", "POST"],
-            credentials: true,
-        },
-    });
-
-    const userSocketMap = new Map();
-
-    const disconnect = (socket) => {
-        console.log(`Client Disconnected: ${socket.id}`);
-        for (const [userId, socketId] of userSocketMap.entries()) {
-            if (socketId === socket.id) {
-                userSocketMap.delete(userId);
-                break;
-            }
-        }
-    };
-
-    const sendMessage = async (message) => {
-        const senderSocketId = userSocketMap.get(message.sender);
-        const recipientSocketId = userSocketMap.get(message.recipient);
-
-        const createMessage = await Message.create(message);
-        const MessageData = await Message.findById(createMessage._id)
-            .populate("sender", "id email firstName lastName image color")
-            .populate("recipient", "id email firstName lastName image color");
-
-        if (recipientSocketId) {
-            io.to(recipientSocketId).emit("receiveMessage", MessageData);
-        }
-        if (senderSocketId) {
-            io.to(senderSocketId).emit("receiveMessage", MessageData);
-        }
-    };
-
-    const sendChannelMessage = async (message) => {
+     const sendChannelMessage = async (message) => {
         const { channelId, sender, content, messageType, fileUrl } = message;
         const createMessage = await Message.create({
             sender,
@@ -83,20 +74,20 @@ const setupSocket = (server) => {
             }
         }
     };
-
-    io.on("connection", (socket) => {
-        const userId = socket.handshake.query.userId;
-        if (userId) {
-            userSocketMap.set(userId, socket.id);
-            console.log(`User Connected ${userId} with socket ID ${socket.id}`);
-        } else {
-            console.log("User ID not provided during connection.");
-        }
-
-        socket.on("sendMessage", sendMessage);
-        socket.on("sendChannelMessage", sendChannelMessage);
-        socket.on("disconnect", () => disconnect(socket));
-    });
-};
-
-export default setupSocket;
+     io.on("connection",(socket)=>{        
+        console.log("connect!!!");
+        
+         const userId = socket.handshake.query.userId;
+         if(userId){
+             userSocketMap.set(userId,socket.id);
+             console.log(`User Connected ${userId} withsocket ID ${socket.id}`);
+         }else{
+             console.log("User ID not provided during connection.");
+         }
+         socket.on("disconnect",()=>disconnect(socket))
+         socket.on("sendMessage",sendMessage)
+         socket.on("sendChannelMessage", sendChannelMessage);
+     })
+ 
+ }
+ export default setupSocket;
