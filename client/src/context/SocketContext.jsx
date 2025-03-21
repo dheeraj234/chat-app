@@ -30,6 +30,8 @@ export const SocketProvider=({children})=>{
                 addContactsInDMContacts(message)
             }
             const handleRecieveChannelMessage=(message)=>{
+                console.log("handleRecieveChannelMessage",message);
+                
                 const {selectedChatData,selectedChatType,addMessage,addChannelInChannelList}=useAppStore.getState();
                 if(selectedChatType!==undefined && selectedChatData._id===message.channelId){
                     addMessage(message)

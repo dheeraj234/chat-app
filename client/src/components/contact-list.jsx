@@ -14,8 +14,12 @@ const ContactList = ({ contacts, isChannel = false }) => {
     } = useAppStore();
 
     const handleClick = (contact) => {
-        if (isChannel) setSelectedChatType("channel");
-        else setSelectedChatType("contact");
+        if (isChannel) {
+            setSelectedChatType("channel");
+        }
+        else {
+            selectedChatType("contact");
+        }
 
         setSelectedChatData(contact);
         if (selectedChatData && selectedChatData._id !== contact._id) {
@@ -24,7 +28,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
     };
 
     return (
-        <div className='mt-5'>
+        <div className='mt-5'>{console.log("contacts", contacts)}
             {contacts.map((contact) => (
                 <div key={contact._id}
                     className={`pl-10 py-2 transition-all duration cursor-pointer 
@@ -56,7 +60,11 @@ const ContactList = ({ contacts, isChannel = false }) => {
                         {isChannel && (
                             <div className='bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full'>#</div>
                         )}
-                        <span>{contact.firstName ? `${contact.firstName} ${contact.lastName}`:contact.email}</span>
+                        <span>
+                            {isChannel ? contact.name || "Unnamed Channel" :
+                                (contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.email)}
+                        </span>
+
                     </div>
                 </div>
             ))}

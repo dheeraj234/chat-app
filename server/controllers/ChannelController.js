@@ -32,10 +32,8 @@ export const getUserChannels =async (request, response, next) => {
     try {
         const userId = new mongoose.Types.ObjectId(request.userId);
         const channels = await Channel.find({
-            $or: [{ admin: userId }, { members: { $in: [userId] } }],}).sort({ updatedAt: -1 });
-
-
-        
+            // $or: [{ admin: userId }, { members: { $in: [userId] } }],}).sort({ updatedAt: -1 });
+            $or: [{ admin: userId }, { members:userId }],}).sort({ updatedAt: -1 });        
         return response.status(201).send({channels});
     } catch (error) {
         console.log({ error });
@@ -45,7 +43,10 @@ export const getUserChannels =async (request, response, next) => {
 
 export const getChannelMessages =async (request, response, next) => {
     try {
+        console.log("getChannelMessages");
+        
         const {channelId}=request.params
+        
         const channel= await Channel.findById(channelId).populate({
             path:"messages",
             populate:{
@@ -53,6 +54,8 @@ export const getChannelMessages =async (request, response, next) => {
             select:"firstName lastName email _id image color"
             },
         });
+        console.log("channel",channel);
+
         if(!channel){
             return response.status(404).send("Channel not found")
         }

@@ -35,6 +35,8 @@ import Channel from "./models/ChannelModel.js";
      }
 
      const sendChannelMessage = async (message) => {
+        console.log("send===",message);
+        
         const { channelId, sender, content, messageType, fileUrl } = message;
         const createMessage = await Message.create({
             sender,
@@ -44,11 +46,15 @@ import Channel from "./models/ChannelModel.js";
             timestamp: new Date(),
             fileUrl,
         });
+        console.log("createMessage",createMessage);
+        
 
         const MessageData = await Message.findById(createMessage._id).populate(
             "sender",
             "id email firstName lastName image color"
         ).exec();
+        console.log("MessageData",MessageData);
+        
 
         await Channel.findByIdAndUpdate(channelId, {
             $push: { messages: createMessage._id },
@@ -56,7 +62,7 @@ import Channel from "./models/ChannelModel.js";
 
         const channel = await Channel.findById(channelId).populate("members");
 
-        const finalData = { ...MessageData.toObject(), channelId: channel._id };
+        const finalData = { ...MessageData._doc, channelId: channel._id };
 
         if (channel && channel.members) {
             channel.members.forEach((member) => {
@@ -86,7 +92,7 @@ import Channel from "./models/ChannelModel.js";
          }
          socket.on("disconnect",()=>disconnect(socket))
          socket.on("sendMessage",sendMessage)
-         socket.on("sendChannelMessage", sendChannelMessage);
+         socket.on("send-channel-message", sendChannelMessage);
      })
  
  }

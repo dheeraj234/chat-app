@@ -37,7 +37,7 @@ export const getContactsForDMList = async (request, response, next) => {
 
         const contacts = await Message.aggregate([
             { $match: { $or: [{ sender: userId }, { recipient: userId }] } },
-            { $sort: { timestamp: -1 } }, // ✅ Fixed sorting issue
+            { $sort: { timestamp: -1 } },
             {
                 $group: {
                     _id: {

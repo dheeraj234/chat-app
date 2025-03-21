@@ -39,8 +39,9 @@ const MessageContainer = () => {
     }
     const getChannelMessages = async () => {
       try {
-        const response = await apiClient.get(GET_CHANNEL_MESSAGES,
+        const response = await apiClient.get(`${GET_CHANNEL_MESSAGES}/${selectedChatData._id}`,
           { withCredentials: true });
+          console.log("renderChannelMessages",response);    
         if (response.data.messages) {
           setSelectedChatMessages(response.data.messages)
         }
@@ -94,6 +95,8 @@ const MessageContainer = () => {
 
   const renderMessages = () => {
     let lastDate = null;
+    console.log("selectedChatMessages",selectedChatMessages);
+    
     return selectedChatMessages.map((message, index) => {
       const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
       const showDate = messageDate !== lastDate;
@@ -165,8 +168,10 @@ const MessageContainer = () => {
   </div>
   }
 
-  const renderChannelMessages = async (message) => {
-    return <div className={`mt-5 ${message.sender_id !== userInfo ? "text-left" : "text-right"}`}>
+  const renderChannelMessages = (message) => {   
+    console.log("message+++++",message);
+     
+    return <div className={`mt-5 ${message.sender._id !== userInfo.id ? "text-left" : "text-right"}`}>
       {
         message.messageType === "text" && (
           <div className={`${message.sender._id === userInfo.id
@@ -224,7 +229,7 @@ const MessageContainer = () => {
             <button className="text-2xl p-3 rounded-full bg-black/20 hover:bg-black/50 
                   cursor-pointer transition-all duration-300"
               onClick={() => {
-                setImageUrl(false)
+                setshowImage(false)
                 setImageUrl(null)
               }}
             >

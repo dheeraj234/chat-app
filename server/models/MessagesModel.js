@@ -9,7 +9,7 @@ const messageSchema = new mongoose.Schema({
     recipient:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Users",
-        required:true,
+        required:false,
     },
     messageType:{
         type:String,
@@ -25,7 +25,7 @@ const messageSchema = new mongoose.Schema({
     fileUrl:{
         type:String,
         required:function(){
-            return this.message==="file"
+            return this.messageType==="file"
         },
     },
     timestamp:{

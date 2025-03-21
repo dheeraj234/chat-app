@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { FaPlus } from "react-icons/fa"
 import { apiClient } from '@/lib/api-client'
-import { CREATE_CHANNEL_ROUTE, GET_ALL_MESSAGES_ROUTE, SEARCH_CONTACTS_ROUTE } from '@/utils/constants'
+import { CREATE_CHANNEL_ROUTE, GET_ALL_CONTACTS_ROUTE, GET_ALL_MESSAGES_ROUTE, SEARCH_CONTACTS_ROUTE } from '@/utils/constants'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import MultipleSelector from '@/components/ui/multipleselect'
@@ -29,11 +29,15 @@ const CreateChannel = () => {
     const [searchedContacts, setSearchedContacts] = useState([]);
 
     useEffect(() => {
+        console.log("create");
+        
         const getData = async () => {
             try {
-                const response = await apiClient.get(GET_ALL_MESSAGES_ROUTE, {
+                const response = await apiClient.get(GET_ALL_CONTACTS_ROUTE, {
                     withCredentials: true
                 });
+                console.log("response.data.contacts",response);
+                
                 setAllContacts(response.data.contacts);
             } catch (error) {
                 console.error("Error fetching contacts:", error);
