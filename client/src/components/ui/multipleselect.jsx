@@ -377,7 +377,7 @@ const MultipleSelector = React.forwardRef(
                     <CommandGroup
                       key={key}
                       heading={key}
-                      className="h-full overflow-auto"
+                      className="h-full overflow-auto bg-purple-900"
                     >
                       <>
                         {dropdowns.map((option) => {

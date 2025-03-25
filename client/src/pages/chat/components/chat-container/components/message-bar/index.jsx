@@ -50,7 +50,6 @@ const MessageBar = () => {
         messageType: "text",
         fileUrl: undefined,
         channelId:selectedChatData._id,
-
       })
     }
     setMessage("");

@@ -47,31 +47,43 @@ const Auth = () => {
   };
 
   const handleLogin = async () => {
-    if(validateLogin()){
-      const response= await apiClient.post(LOGIN_ROUTE,{email,password},{withCredentials:true})
-      console.log("THE LGOIN RESPONSE",response);
-    }
-    if(response.data.user.id){
-      setUserInfo(response.data.user)
-      if(response.data.user.profileSetup) {
-        navigate("/chat");
+    if (validateLogin()) {
+      try {
+        const response = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true });  
+        if (response.data?.user?.id) { // Ensure response structure
+          setUserInfo(response.data.user);
+  
+          if (response.data.user.profileSetup) {
+            console.log("Navigating to /chat");
+            navigate("/chat");
+          } else {
+            console.log("Navigating to /profile");
+            navigate("/profile");
+          }
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        toast.error("Login failed. Please try again.");
       }
-      else {
-        navigate("/profile")
-      }
     }
-
   };
+  
+
   const handleSignup = async () => {
     if (validateSignup()) {
-      const response = await apiClient.post(SIGNUP_ROUTE, { email, password },{withCredentials:true});
-      console.log({ response });
-    }
-    if(response.status===201){
-      setUserInfo(response.data.user)
-      navigate("/profile");
+      try {
+        const response = await apiClient.post(SIGNUP_ROUTE, { email, password }, { withCredentials: true });  
+        if (response.status === 201) { // Ensure this block executes correctly
+          setUserInfo(response.data.user);
+          navigate("/profile"); // This should now work properly
+        }
+      } catch (error) {
+        console.error("Signup error:", error);
+        toast.error("Signup failed. Please try again.");
+      }
     }
   };
+  
 
   return (
     <div className="h-screen w-screen flex items-center justify-center p-4">
@@ -97,15 +109,15 @@ const Auth = () => {
                 </TabsTrigger>
               </TabsList>
               <TabsContent className="flex flex-col gap-4 mt-6" value="login">
-                <Input placeholder="Email" type="email" className="rounded-full p-4" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input placeholder="Email" type="email" className="rounded-full p-4 mt-4" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input placeholder="Password" type="password" className="rounded-full p-4" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <Button className="rounded-full p-4" onClick={handleLogin}>Login</Button>
+                <Button className="rounded-full p-4 bg-purple-500 hover:bg-purple-600 focus:bg-purple-700 text-white transition-all duration-300" onClick={handleLogin}>Login</Button>
               </TabsContent>
               <TabsContent className="flex flex-col gap-4 mt-6" value="signup">
                 <Input placeholder="Email" type="email" className="rounded-full p-4" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input placeholder="Password" type="password" className="rounded-full p-4" value={password} onChange={(e) => setPassword(e.target.value)} />
                 <Input placeholder="Confirm Password" type="password" className="rounded-full p-4" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                <Button className="rounded-full p-4" onClick={handleSignup}>Signup</Button>
+                <Button className="rounded-full p-4 bg-purple-500 hover:bg-purple-600 focus:bg-purple-700 text-white transition-all duration-300" onClick={handleSignup}>Signup</Button>
               </TabsContent>
             </Tabs>
           </div>

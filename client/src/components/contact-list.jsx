@@ -1,6 +1,6 @@
-import { useAppStore } from '@/store'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
-import React from 'react'
+import { useAppStore } from '@/store';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import React from 'react';
 import { HOST } from '@/utils/constants';
 import { getColor } from '@/lib/utils';
 
@@ -9,63 +9,53 @@ const ContactList = ({ contacts, isChannel = false }) => {
         selectedChatData,
         setSelectedChatData,
         setSelectedChatType,
-        selectedChatType,
+        selectedChatMessages,
         setSelectedChatMessages
     } = useAppStore();
 
     const handleClick = (contact) => {
-        if (isChannel) {
-            setSelectedChatType("channel");
-        }
-        else {
-            selectedChatType("contact");
-        }
-
+        setSelectedChatType(isChannel ? "channel" : "contact");
         setSelectedChatData(contact);
+
         if (selectedChatData && selectedChatData._id !== contact._id) {
             setSelectedChatMessages([]);
         }
     };
 
     return (
-        <div className='mt-5'>{console.log("contacts", contacts)}
+        <div className="mt-5 space-y-2 px-4">
             {contacts.map((contact) => (
-                <div key={contact._id}
-                    className={`pl-10 py-2 transition-all duration cursor-pointer 
-            ${selectedChatData && selectedChatData._id === contact._id
-                            ? "bg-[#8417ff] hover:bg-[#8417ff]" : "hover:bg-[#8417ff]"}`}
+                <div
+                    key={contact._id}
+                    className={`flex items-center gap-4 p-3 rounded-lg transition-all cursor-pointer shadow-sm 
+                    ${selectedChatData && selectedChatData._id === contact._id
+                        ? "bg-gradient-to-r from-purple-600 to-purple-800 text-white"
+                        : "hover:bg-purple-700/30"
+                    }`}
                     onClick={() => handleClick(contact)}
                 >
-                    <div className="flex gap-5 items-center justify-start text-neutral-300">
-                        {!isChannel && (
-                            <Avatar className="h-10 w-10 rounded-full overflow-hidden">
-                                {contact.image ? (
-                                    <AvatarImage
-                                        src={`${HOST}/${contact.image}`}
-                                        alt="profile"
-                                        className="object-cover w-full h-full bg-black"
-                                    />
-                                ) : (
-                                    <div className={`${selectedChatData && selectedChatData._id === contact._id
-                                        ? "bg-[#ffffff22] border border-white/70"
-                                        : getColor(contact.color)
-                                        } uppercase h-10 w-10 text-lg border-[1px] flex 
-                                    justify-center items-center rounded-full`}
-                                    >
-                                        {contact.firstName ? contact.firstName.charAt(0) : contact.email.charAt(0)}
-                                    </div>
-                                )}
-                            </Avatar>
-                        )}
-                        {isChannel && (
-                            <div className='bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full'>#</div>
-                        )}
-                        <span>
-                            {isChannel ? contact.name || "Unnamed Channel" :
-                                (contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.email)}
-                        </span>
-
-                    </div>
+                    {!isChannel ? (
+                        <Avatar className="h-12 w-12 rounded-full shadow-md">
+                            {contact.image ? (
+                                <AvatarImage
+                                    src={`${HOST}/${contact.image}`}
+                                    alt="profile"
+                                    className="object-cover w-full h-full"
+                                />
+                            ) : (
+                                <div className={`h-12 w-12 flex items-center justify-center text-lg font-semibold rounded-full text-white ${getColor(contact.color)}`}>
+                                    {contact.firstName ? contact.firstName.charAt(0) : contact.email.charAt(0)}
+                                </div>
+                            )}
+                        </Avatar>
+                    ) : (
+                        <div className="bg-white/20 h-12 w-12 flex items-center justify-center rounded-full text-white text-lg font-bold">
+                            #
+                        </div>
+                    )}
+                    <span className="text-lg font-medium text-white">
+                        {isChannel ? contact.name || "Unnamed Channel" : (contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.email)}
+                    </span>
                 </div>
             ))}
         </div>

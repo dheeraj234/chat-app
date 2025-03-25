@@ -7,7 +7,7 @@ import { MdFolderZip } from "react-icons/md"
 import { IoMdArrowRoundDown } from "react-icons/io"
 import { IoCloseSharp } from "react-icons/io5"
 import { getColor } from '@/lib/utils'
-import { AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const MessageContainer = () => {
   const scrollRef = useRef()
@@ -27,9 +27,7 @@ const MessageContainer = () => {
       try {
         const response = await apiClient.post(GET_ALL_MESSAGES_ROUTE,
           { id: selectedChatData._id },
-          { withCredentials: true });
-          console.log("response",response);
-          
+          { withCredentials: true });          
         if (response.data.messages) {
           setSelectedChatMessages(response.data.messages)
         }
@@ -41,7 +39,6 @@ const MessageContainer = () => {
       try {
         const response = await apiClient.get(`${GET_CHANNEL_MESSAGES}/${selectedChatData._id}`,
           { withCredentials: true });
-          console.log("renderChannelMessages",response);    
         if (response.data.messages) {
           setSelectedChatMessages(response.data.messages)
         }
@@ -94,9 +91,7 @@ const MessageContainer = () => {
   }
 
   const renderMessages = () => {
-    let lastDate = null;
-    console.log("selectedChatMessages",selectedChatMessages);
-    
+    let lastDate = null;    
     return selectedChatMessages.map((message, index) => {
       const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
       const showDate = messageDate !== lastDate;
@@ -168,9 +163,7 @@ const MessageContainer = () => {
   </div>
   }
 
-  const renderChannelMessages = (message) => {   
-    console.log("message+++++",message);
-     
+  const renderChannelMessages = (message) => {        
     return <div className={`mt-5 ${message.sender._id !== userInfo.id ? "text-left" : "text-right"}`}>
       {
         message.messageType === "text" && (

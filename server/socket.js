@@ -34,9 +34,7 @@ import Channel from "./models/ChannelModel.js";
          }
      }
 
-     const sendChannelMessage = async (message) => {
-        console.log("send===",message);
-        
+     const sendChannelMessage = async (message) => {        
         const { channelId, sender, content, messageType, fileUrl } = message;
         const createMessage = await Message.create({
             sender,
@@ -45,17 +43,11 @@ import Channel from "./models/ChannelModel.js";
             messageType,
             timestamp: new Date(),
             fileUrl,
-        });
-        console.log("createMessage",createMessage);
-        
-
+        });        
         const MessageData = await Message.findById(createMessage._id).populate(
             "sender",
             "id email firstName lastName image color"
         ).exec();
-        console.log("MessageData",MessageData);
-        
-
         await Channel.findByIdAndUpdate(channelId, {
             $push: { messages: createMessage._id },
         });
@@ -80,9 +72,7 @@ import Channel from "./models/ChannelModel.js";
             }
         }
     };
-     io.on("connection",(socket)=>{        
-        console.log("connect!!!");
-        
+     io.on("connection",(socket)=>{                
          const userId = socket.handshake.query.userId;
          if(userId){
              userSocketMap.set(userId,socket.id);
@@ -90,9 +80,9 @@ import Channel from "./models/ChannelModel.js";
          }else{
              console.log("User ID not provided during connection.");
          }
-         socket.on("disconnect",()=>disconnect(socket))
          socket.on("sendMessage",sendMessage)
          socket.on("send-channel-message", sendChannelMessage);
+         socket.on("disconnect",()=>disconnect(socket))
      })
  
  }

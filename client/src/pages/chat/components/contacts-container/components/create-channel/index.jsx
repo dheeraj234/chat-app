@@ -28,16 +28,12 @@ const CreateChannel = () => {
     const [channelName, setChannelName] = useState("");
     const [searchedContacts, setSearchedContacts] = useState([]);
 
-    useEffect(() => {
-        console.log("create");
-        
+    useEffect(() => {        
         const getData = async () => {
             try {
                 const response = await apiClient.get(GET_ALL_CONTACTS_ROUTE, {
                     withCredentials: true
-                });
-                console.log("response.data.contacts",response);
-                
+                });                
                 setAllContacts(response.data.contacts);
             } catch (error) {
                 console.error("Error fetching contacts:", error);
@@ -69,31 +65,6 @@ const CreateChannel = () => {
             console.error("Error creating channel:", error);
         }
     };
-
-    // const searchContacts = async (searchTerm) => {
-    //     try {
-    //         if (searchTerm.length > 0) {
-    //             const response = await apiClient.post(
-    //                 SEARCH_CONTACTS_ROUTE,
-    //                 { searchTerm },
-    //                 { withCredentials: true }
-    //             );
-    //             if (response.status === 200) {
-    //                 setSearchedContacts(response.data.contacts);
-    //             } else {
-    //                 setSearchedContacts([]);
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error("Error searching contacts:", error);
-    //     }
-    // };
-
-    // const selectNewContact = (contact) => {
-    //     setSelectedChatType("contact");
-    //     setSelectedChatData(contact);
-    //     setSearchedContacts([]);
-    // };
 
     return (
         <>

@@ -8,15 +8,11 @@ const createToken = (email, userId) => {
 }
 export const signup = async (request, response, next) => {
     try {
-        const { email, password } = request.body;
-        console.log("email,password",email,password);
-        
+        const { email, password } = request.body;        
         if (!email || !password) {
             return response.status(400).send("Email and PAssword is Required")
         }
-        const user = await User.create({ email, password });
-        console.log("USER",user);
-        
+        const user = await User.create({ email, password });        
         response.cookie("jwt", createToken(email, user.id), {
             maxAge,
             secure: true,
