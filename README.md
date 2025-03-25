@@ -1,6 +1,8 @@
 # Synchronous Chat App (MERN Stack)
 
 A synchronous chat web application built using the MERN stack (MongoDB, Express, React, Node.js). The app allows users to send Direct Messages (DMs) and participate in group chats.
+- Live Demo: [Visit Syncronus Chat App](https://syncronus-chat-app.netlify.app)
+
 
 ## Features
 - Real-time chat
